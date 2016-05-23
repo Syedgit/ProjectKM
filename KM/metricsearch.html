@@ -1,0 +1,335 @@
+<div class="panel panel-primary">
+    <div class="panel-heading">Metric Search</div>
+    <div class="panel-body">
+        <form name="formCtrl" class="form-horizontal" novalidate>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <uib-accordion close-others="false">
+                        <uib-accordion-group is-open="status.isMetricBaseOpen">
+                            <uib-accordion-heading>
+                                <small>
+                                    Search Options - Metric Base
+                                </small>
+                                <orcit-icon class="pull-right" icon="{{status.isMetricBaseOpen ? 'expand_more' : 'chevron_right'}}"></orcit-icon>
+                            </uib-accordion-heading>
+
+                            <!-- Keyword(s) -->
+                            <km-form-field o-label="Keyword(s)">
+                                <input type="text"
+                                    class="form-control"
+                                    name="keyword"
+                                    km-id
+                                    ng-model="metricSearchInput.keyword"
+                                    placeholder="Metric Base Keyword..." />
+                            </km-form-field>
+
+                            <!-- Metric Base ID(s) -->
+                            <km-form-field o-label="Metric Base ID(s)">
+                                <input type="text"
+                                    class="form-control"
+                                    name="metricBaseIds"
+                                    km-id
+                                    ng-model="metricSearchInput.ids"
+                                    placeholder="Comma Separated Values..." />
+                            </km-form-field>
+
+                            <!-- Privileged Metric -->
+                            <km-form-field o-label="Privileged Metric">
+                                <label class="checkbox-inline">
+                                    <input type="checkbox"
+                                        name="privilegedMetric"
+                                        km-id
+                                        ng-false-value="'N'"
+                                        ng-model="metricSearchInput.privilegedMetricFlag"
+                                        ng-true-value="'Y'" />
+                                    &nbsp;
+                                </label>
+                            </km-form-field>
+
+                            <!-- Data Source -->
+                            <km-form-field o-label="Data Source">
+                                <input type="text"
+                                    class="form-control"
+                                    name="dataSource"
+                                    km-id
+                                    ng-model="metricSearchInput.dataSource"
+                                    typeahead-min-length="3"
+                                    typeahead-on-select="selectDataSource($item)"
+                                    typeahead-wait-ms="300"
+                                    uib-typeahead="sourceKey as sourceKey.name for sourceKey in getDatasourceList($viewValue)"
+                                    placeholder="Data Source..." />
+                            </km-form-field>
+
+                            <!-- Status -->
+                            <km-form-field o-label="Status">
+                                <label class="radio-inline" ng-repeat="statusType in statusTypes">
+                                    <input type="radio"
+                                        name="status"
+                                        ng-model="metricSearchInput.status"
+                                        ng-value="statusType.value" />
+                                    {{statusType.name}}
+                                </label>
+                            </km-form-field>
+
+                            <!-- User Name -->
+                            <km-form-field o-label="User Name">
+                                <div ng-hide="metricSearchInput.standardId">
+                                    <input type="text"
+                                        class="form-control"
+                                        name="associate"
+                                        km-id
+                                        ng-model="temporary.baseWorker"
+                                        typeahead-editable="false"
+                                        typeahead-min-length="3"
+                                        typeahead-wait-ms="300"
+                                        uib-typeahead="worker as worker.fullName for worker in getWorkerList($viewValue)"
+                                        placeholder="Last Name, First Name..." />
+                                </div>
+                                <div ng-show="metricSearchInput.standardId">
+                                    <div class="input-group">
+                                        <input type="text"
+                                            class="form-control"
+                                            ng-value="temporary.baseWorker.fullName"
+                                            readonly />
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="removeBaseWorker()">
+                                                Remove
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </km-form-field>
+
+                            <!-- Risk Type -->
+                            <km-form-field o-label="Risk Type">
+                                <label class="checkbox-inline" ng-repeat="riskType in riskTypes">
+                                    <input type="checkbox" value="{{riskType.categoryName}}" ng-change="handleRiskSelection(riskType)" ng-model="riskType.checkedCatVal" />
+                                    {{riskType.categoryName}}
+                                </label>
+                            </km-form-field>
+
+                            <!-- Operational Risk Category -->
+                            <km-form-field o-label="Operational Risk Category">
+                                <label class="checkbox-inline" ng-repeat="operationRiskCategory in operationRiskCategories">
+                                    <input type="checkbox"
+                                        ng-change="handleOpRiskCatSelection(operationRiskCategory)"
+                                        ng-model="operationRiskCategory.checkedOpRiskCat"
+                                        ng-value="operationRiskCategory.categoryName" />
+                                    {{operationRiskCategory.categoryName}}
+                                </label>
+                            </km-form-field>
+                        </uib-accordion-group>
+
+                        <uib-accordion-group is-open="status.isMetricInstanceOpen">
+                            <uib-accordion-heading>
+                                <small>
+                                    Search Options - Metric Instance
+                                </small>
+                                <orcit-icon class="pull-right" icon="{{status.isMetricInstanceOpen ? 'expand_more' : 'chevron_right'}}"></orcit-icon>
+                            </uib-accordion-heading>
+
+                            <!-- Metric Instance ID(s) -->
+                            <km-form-field o-label="Metric Instance ID(s)">
+                                <input type="text"
+                                    class="form-control"
+                                    name="metricInstanceIds"
+                                    km-id
+                                    ng-model="temporary.metricInstanceIds"
+                                    placeholder="Comma Separated Values..." />
+                            </km-form-field>
+
+                            <!-- Internal/Outsourced Description -->
+                            <km-form-field o-label="Internal/Outsourced Description">
+                                <input type="text"
+                                    class="form-control"
+                                    name="internalOutsourcedDescription"
+                                    km-id
+                                    ng-model="metricSearchInput.iodescription"
+                                    placeholder="Internal/Outsourced Description..." />
+                            </km-form-field>
+
+                            <!-- RCSA Reportable -->
+                            <km-form-field o-label="RCSA Reportable">
+                                <label class="radio-inline">
+                                    <input type="radio"
+                                        name="rcsaReportable"
+                                        ng-model="metricSearchInput.rcsaReportableFlag"
+                                        ng-value="'Y'" />
+                                    Yes
+                                </label>
+                                <label class="radio-inline">
+                                    <input type="radio"
+                                        name="rcsaReportable"
+                                        ng-model="metricSearchInput.rcsaReportableFlag"
+                                        ng-value="'N'" />
+                                    No
+                                </label>
+                            </km-form-field>
+
+                            <!-- Frequency -->
+                            <km-form-field o-label="Frequency">
+                                <label class="radio-inline" ng-repeat="frequency in temporary.instanceFrequencyOptions">
+                                    <input type="radio"
+                                        name="frequency"
+                                        ng-model="metricSearchInput.instanceFrequency"
+                                        ng-value="frequency.value" />
+                                    {{frequency.name}}
+                                </label>
+                            </km-form-field>
+
+                            <!-- Status -->
+                            <km-form-field o-label="Status">
+                                <label class="radio-inline" ng-repeat="option in temporary.instanceStatusOptions">
+                                    <input type="radio"
+                                        name="instanceStatus"
+                                        ng-model="metricSearchInput.instanceStatus"
+                                        ng-value="option.value" />
+                                    {{option.name}}
+                                </label>
+                            </km-form-field>
+
+                            <!-- Legal Entity -->
+                            <km-form-field o-label="Legal Entity">
+                                <div ng-hide="metricSearchInput.legalEntity">
+                                    <input type="text"
+                                        class="form-control"
+                                        name="legalEntity"
+                                        km-id
+                                        ng-model="temporary.legalEntity"
+                                        typeahead-editable="false"
+                                        typeahead-min-length="1"
+                                        typeahead-wait-ms="300"
+                                        uib-typeahead="legalEntity as legalEntity.legalEntityName for legalEntity in getLegalEntityList($viewValue)"
+                                        placeholder="Legal Entity..." />
+                                </div>
+                                <div ng-show="metricSearchInput.legalEntity">
+                                    <div class="input-group">
+                                        <input type="text"
+                                            class="form-control"
+                                            ng-value="temporary.legalEntity.legalEntityName"
+                                            readonly />
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="removeLegalEntity()">
+                                                Remove
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </km-form-field>
+
+                            <!-- User Name -->
+                            <km-form-field o-label="User Name">
+                                <div ng-hide="metricSearchInput.instanceStandardId">
+                                    <input type="text"
+                                        class="form-control"
+                                        name="instanceAssociate"
+                                        km-id
+                                        ng-model="temporary.instanceWorker"
+                                        typeahead-editable="false"
+                                        typeahead-min-length="3"
+                                        typeahead-wait-ms="300"
+                                        uib-typeahead="worker as worker.fullName for worker in getWorkerList($viewValue)"
+                                        placeholder="Last Name, First Name..." />
+                                </div>
+                                <div ng-show="metricSearchInput.instanceStandardId">
+                                    <div class="input-group">
+                                        <input type="text"
+                                            class="form-control"
+                                            ng-value="temporary.instanceWorker.fullName"
+                                            readonly />
+                                        <span class="input-group-btn">
+                                            <button type="button" class="btn btn-default" ng-click="removeInstanceWorker()">
+                                                Remove
+                                            </button>
+                                        </span>
+                                    </div>
+                                </div>
+                            </km-form-field>
+
+                            <!-- Geographical Location -->
+                            <km-form-field o-label="Geographical Location">
+                                <orcit-multiselect-treeview
+                                    km-id
+                                    ng-model="temporary.geoLocations"
+                                    o-close-on-select="true"
+                                    o-max-selectable="1"
+                                    o-tree-data="temporary.geoTreeOptions"
+                                    placeholder="Select Geographical Location...">
+                                </orcit-multiselect-treeview>
+                            </km-form-field>
+
+                            <!-- Internal/Outsourced -->
+                            <km-form-field o-label="Internal/Outsourced">
+                                <select kendo-multi-select
+                                    k-options="internalOutsourcedOptions"
+                                    k-ng-model="metricSearchInput.internalOutsourced">
+                                </select>
+                            </km-form-field>
+
+                            <!-- Operational Metric Type -->
+                            <km-form-field o-label="Operational Metric Type">
+                                <select kendo-multi-select
+                                    k-max-selected-items="1"
+                                    k-ng-model="metricSearchInput.operationalMetricType"
+                                    k-options="operationalMetricTypeOptions">
+                                </select>
+                            </km-form-field>
+
+                            <!-- Compliance Metric Type -->
+                            <km-form-field o-label="Compliance Metric Type">
+                                <select kendo-multi-select
+                                    k-max-selected-items="1"
+                                    k-ng-model="metricSearchInput.complianceMetricType"
+                                    k-options="complianceMetricTypeOptions">
+                                </select>
+                            </km-form-field>
+
+                            <!-- Enterprise Area of Coverage -->
+                            <km-form-field o-label="Enterprise Area of Coverage">
+                                <select kendo-multi-select
+                                    k-data-source="enterpriseAreaOfCoverageDataSource"
+                                    k-options="enterpriseAreaOfCoverageOptions"
+                                    k-ng-model="metricSearchInput.enterpriseAreaOfCoverage">
+                                </select>
+                            </km-form-field>
+
+                            <!-- Enterprise Reporting Hierarchy -->
+                            <km-form-field o-label="Enterprise Reporting Hierarchy">
+                                <orcit-multiselect-treeview
+                                    km-id
+                                    ng-model="temporary.erh"
+                                    o-close-on-select="true"
+                                    o-tree-data="temporary.erhTreeOptions"
+                                    placeholder="Select Enterprise Reporting Hierarchy...">
+                                </orcit-multiselect-treeview>
+                            </km-form-field>
+                        </uib-accordion-group>
+                    </uib-accordion>
+                </div>
+                <div class="panel-footer">
+                    <button type="submit" class="btn btn-primary" ng-click="search()">
+                        <orcit-icon icon="search"></orcit-icon>
+                        Search
+                    </button>
+                    <button type="button" class="btn btn-default" ng-click="resetForm()">
+                        <orcit-icon icon="clear"></orcit-icon>
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                Search Results
+            </div>
+            <div ng-show="showSearchResultGrid" class="panel-body">
+                <p>
+                    Results found: {{searchResult.total}}
+                </p>
+                <div kendo-grid="metricBaseDataGrid" k-options="metricBaseMainGridOptions">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

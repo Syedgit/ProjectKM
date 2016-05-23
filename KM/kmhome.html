@@ -1,0 +1,99 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel-primary" ng-show="hasAdminRole() || hasInstanceOwnerOrValueProviderRole() ">
+            <div class="panel-heading">
+                Required Actions
+                <small>
+                    (Click an item to see further details.)
+                </small>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p ng-hide="home.numberOfMetricBasePendingReview || home.numberOfMetricInstancePendingReview || home.numberOfMVPendingReview || home.numberOfMVPastDueDate || home.numberOfMVPendingReSubmission || home.numberOfUMVDueDate">
+                            No required actions at this time.
+                        </p>
+                        <ul class="nav nav-pills home-required-actions" ng-show="home.numberOfMetricBasePendingReview || home.numberOfMetricInstancePendingReview || home.numberOfMVPendingReview || home.numberOfMVPastDueDate || home.numberOfMVPendingReSubmission || home.numberOfUMVDueDate">
+                            <li ng-show="home.numberOfMetricBasePendingReview">
+                                <a ui-sref="app.myMetrics.metricBasePendingReview">
+                                    <div class="home-required-actions-title">
+                                        Metric Bases<br />
+                                        Pending Review
+                                    </div>
+                                    <span class="badge">
+                                        {{home.numberOfMetricBasePendingReview}}
+                                    </span>
+                                </a>
+                            </li>
+                            <li ng-show="home.numberOfMetricInstancePendingReview">
+                                <a ui-sref="app.myMetrics.metricInstancePendingReview">
+                                    <div class="home-required-actions-title">
+                                        Metric Instances<br />
+                                        Pending Review
+                                    </div>
+                                    <span class="badge">
+                                        {{home.numberOfMetricInstancePendingReview}}
+                                    </span>
+                                </a>
+                            </li>
+                            <li ng-show="home.numberOfMVPendingReview">
+                                <a ui-sref="app.myMetrics.metricValue.pendingReview">
+                                    <div class="home-required-actions-title">
+                                        Metric Values<br />
+                                        Pending Review
+                                    </div>
+                                    <span class="badge">
+                                        {{home.numberOfMVPendingReview}}
+                                    </span>
+                                </a>
+                            </li>
+                            <li ng-show="home.numberOfMVPastDueDate">
+                                <a ui-sref="app.myMetrics.metricValue.pastDueValue">
+                                    <div class="home-required-actions-title">
+                                        Metric Values<br />
+                                        Past Due
+                                    </div>
+                                    <span class="badge">
+                                        {{home.numberOfMVPastDueDate}}
+                                    </span>
+                                </a>
+                            </li>
+                            <li ng-show="home.numberOfMVPendingReSubmission">
+                                <a ui-sref="app.myMetrics.metricValue.pendingResubmission">
+                                    <div class="home-required-actions-title">
+                                        Metric Values<br />
+                                        Pending Resubmission
+                                    </div>
+                                    <span class="badge">
+                                        {{home.numberOfMVPendingReSubmission}}
+                                    </span>
+                                </a>
+                            </li>
+                            <li ng-show="home.numberOfUMVDueDate">
+                                <a ui-sref="app.myMetrics.metricValue.dueDateUpcoming">
+                                    <div class="home-required-actions-title">
+                                        Metric Values<br />
+                                        Due Date Upcoming
+                                    </div>
+                                    <span class="badge">
+                                        {{home.numberOfUMVDueDate}}
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-primary" ng-show="announcements.length">
+            <div class="panel-heading">
+                Announcements
+            </div>
+            <div class="panel-body">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-bind-html="renderHTML(announcement.description)" ng-repeat="announcement in announcements"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
